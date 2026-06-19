@@ -44,11 +44,11 @@ pipeline{
         //        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
         //    }
         //}
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
-            }
-        }
+        //stage('TRIVY FS SCAN') {
+        //    steps {
+        //        sh "trivy fs . > trivyfs.txt"
+        //    }
+        //}
         stage("Docker Build & Push"){
             steps{
                 script{
@@ -60,11 +60,11 @@ pipeline{
                 }
             }
         }
-        stage("TRIVY"){
-            steps{
-                sh "trivy image yayyoubi/reddit:latest > trivy.txt"
-            }
-        }
+        //stage("TRIVY"){
+        //    steps{
+        //        sh "trivy image yayyoubi/reddit:latest > trivy.txt"
+        //    }
+        //}
         stage('Update Deployment file') {
             environment {
                 GIT_REPO_NAME = "jenkins-kubernetes"
