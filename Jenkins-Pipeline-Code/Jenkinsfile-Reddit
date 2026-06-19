@@ -15,7 +15,7 @@ pipeline{
         }
         stage('Checkout from Git'){
             steps{
-                git branch: 'main', url: 'https://github.com/uniquesreedhar/Reddit-Project.git'
+                git branch: 'master', url: 'https://github.com/ayyoubiyouness/jenkins-kubernetes.git'
             }
         }
         stage('Install Dependencies') {
@@ -54,28 +54,28 @@ pipeline{
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
                        sh "docker build -t reddit ."
-                       sh "docker tag reddit sreedhar8897/reddit:${BUILD_NUMBER} "
-                       sh "docker push sreedhar8897/reddit:${BUILD_NUMBER} "
+                       sh "docker tag reddit yayyoubi/reddit:${BUILD_NUMBER} "
+                       sh "docker push yayyoubi/reddit:${BUILD_NUMBER} "
                     }
                 }
             }
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image sreedhar8897/reddit:latest > trivy.txt"
+                sh "trivy image yayyoubi/reddit:latest > trivy.txt"
             }
         }
         stage('Update Deployment file') {
             environment {
-                GIT_REPO_NAME = "Reddit-Project"
-                GIT_USER_NAME = "uniquesreedhar"
+                GIT_REPO_NAME = "jenkins-kubernetes"
+                GIT_USER_NAME = "ayyoubiyouness"
             }
             steps {
                 dir('K8s'){
                     withCredentials([string(credentialsId: 'githubcred', variable: 'GITHUB_TOKEN')]) {
                         sh '''
-                            git config user.email "madithatisreedhar123@gmail.com"
-                            git config user.name "uniquesreedhar"
+                            git config user.email "youness.ayyoubi@centrale-casablanca.ma"
+                            git config user.name "ayyoubiyouness"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
                             imageTag=$(grep -oP '(?<=reddit:)[^ ]+' deployment.yml)
@@ -83,7 +83,7 @@ pipeline{
                             sed -i "s/reddit:${imageTag}/reddit:${BUILD_NUMBER}/" deployment.yml
                             git add deployment.yml
                             git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
                         '''
                     }
                 }
